@@ -3,9 +3,10 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MovieModule } from './movie/movie.module';
 import { HttpModule } from '@nestjs/axios';
+import { TvModule } from './tv/tv.module';
 
 @Module({
-  imports: [MovieModule, HttpModule],
+  imports: [HttpModule, MovieModule, TvModule],
   controllers: [AppController],
   providers: [AppService],
 })

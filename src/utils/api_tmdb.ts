@@ -40,19 +40,24 @@ export const options = {
         include_video: false,
         language: process.env.TMDB_LANGUAGE,
     },
-    popular: {
+    movie_popular: {
         sort_by: 'popularity.desc',
     },
-    nowPlaying: {
-        sort_by: 'popularity.desc',
-        with_release_type: 3,
-    },
-
-    topRated: {
+    movie_topRated: {
         sort_by: 'vote_average.desc',
         vote_count_gte: 200,
     },
-    upcomming: {
+    movie_upcomming: {
         with_release_type: 3,
-    }
+    },
+    tv_popular: {
+        sort_by: 'popularity.desc',
+        watch_region: 'FR',
+        with_watch_monetization_types: 'flatrate|free|ads|rent|buy',
+    },
+    tv_topRated: {
+        sort_by: 'vote_average.desc',
+        'vote_count.gte': 200,
+    },
+
 };

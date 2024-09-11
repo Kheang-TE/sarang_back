@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Req } from '@nestjs/common';
+import { Controller, Get, Param, Redirect, Req } from '@nestjs/common';
 import { MovieService } from './movie.service';
 import { Request } from 'express';
 
@@ -7,17 +7,14 @@ export class MovieController {
 
     constructor( private readonly movieService: MovieService) {}
 
+    @Get()
+    @Redirect('popular')
+    getMovies(){}
+
     @Get('popular')
     async getPopular(@Req() request: Request) : Promise<Object>{
         const query = request.query;
         const response = await this.movieService.getPopular( query );
-        return response.data;
-    }
-
-    @Get('now-playing')
-    async getNowPlaying(@Req() request: Request) : Promise<Object>{
-        const query = request.query;
-        const response = await this.movieService.getNowPlaying(query);
         return response.data;
     }
 
