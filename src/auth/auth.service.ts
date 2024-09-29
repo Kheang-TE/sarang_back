@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { AuthBody } from './auth.controller';
+import { AuthBody, RegisterBody } from './auth.controller';
 import { PrismaService } from 'src/utils/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-
+import { UserPayload } from './jwt.strategy';
 
 @Injectable()
 export class AuthService {
@@ -30,7 +30,34 @@ export class AuthService {
             throw new Error('Invalid password');
         }
 
-        return await this.authenticateUser({userId: existingUser.id});
+        return this.authenticateUser({userId: existingUser.id});
+    }
+
+    async register({registerBody} : {registerBody: RegisterBody}) {
+
+        const {email, password, username} = registerBody;
+
+        const existingUser = await this.prisma.user.findUnique({
+            where: {
+                email: email
+            }
+        });
+
+        if (existingUser) {
+            throw new Error('User is already registered with this email');
+        }
+        
+        const hashedPassword = await this.hashPassword({password});
+
+        const createdUser = await this.prisma.user.create({
+            data: {
+                email,
+                password: hashedPassword,
+                username
+            }
+        });
+
+        return this.authenticateUser({userId: createdUser.id});
     }
 
     private async hashPassword( {password} : {password: string}) {
@@ -43,8 +70,8 @@ export class AuthService {
         return isPasswordValid;
     }
 
-    private authenticateUser({userId}:{userId: string}){
-        const payload = {userId};
+    private authenticateUser({userId}: UserPayload){
+        const payload : UserPayload = {userId};
         return {
             access_token: this.jwtService.sign(payload),
         }
